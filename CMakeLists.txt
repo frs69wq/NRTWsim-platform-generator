@@ -35,6 +35,10 @@ target_link_libraries(platform_summary PRIVATE
   SimGrid::SimGrid
   FSMOD::FSMOD
 )
+target_include_directories(platform_summary PRIVATE
+    ${SimGrid_INCLUDE_DIR}
+    ${FSMOD_INCLUDE_DIR}
+)
 
 # Tests
 enable_testing()
@@ -42,6 +46,10 @@ enable_testing()
 add_executable(test_cluster25
   tests/compare_cluster25.cpp
   tests/platform_cluster25.cpp
+)
+target_include_directories(test_cluster25 PRIVATE
+    ${SimGrid_INCLUDE_DIR}
+    ${FSMOD_INCLUDE_DIR}
 )
 
 target_link_libraries(test_cluster25 PRIVATE
