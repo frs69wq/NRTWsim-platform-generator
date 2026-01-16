@@ -1,7 +1,7 @@
 # JSON Platform Loader for SimGrid
 
 [![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL_v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)
-[![Build-Linux](https://github.com/simgrid/json-platform-loader/actions/workflows/build.yml/badge.svg)](https://github.com/simgrid/json-platform-loader/actions/workflows/build.yml)
+[![Build-Linux](https://github.com/frs69wq/NRTWsim-platform-generator/actions/workflows/build.yml/badge.svg)](https://github.com/frs69wq/NRTWsim-platform-generator/actions/workflows/build.yml)
 
 A shared library that loads SimGrid platforms from JSON configuration files, enabling declarative platform definitions without recompilation.
 
