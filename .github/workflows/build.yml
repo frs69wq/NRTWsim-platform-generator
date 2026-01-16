@@ -1,0 +1,68 @@
+name: Build-Linux
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - '**.rst'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install system prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libboost-all-dev \
+            nlohmann-json3-dev
+
+      - name: Cache SimGrid
+        uses: actions/cache@v4
+        id: cache-simgrid
+        with:
+          path: /opt/simgrid
+          key: ${{ runner.os }}-simgrid-v1
+
+      - name: Install SimGrid
+        if: steps.cache-simgrid.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 https://framagit.org/simgrid/simgrid.git
+          cd simgrid
+          cmake -B build -Denable_smpi=OFF -Denable_model-checking=OFF -DCMAKE_INSTALL_PREFIX=/opt/simgrid
+          cmake --build build -j$(nproc)
+          sudo cmake --install build
+
+      - name: Cache FSMod
+        uses: actions/cache@v4
+        id: cache-fsmod
+        with:
+          path: /opt/fsmod
+          key: ${{ runner.os }}-fsmod-v1
+
+      - name: Install FSMod
+        if: steps.cache-fsmod.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 https://github.com/simgrid/file-system-module.git
+          cd file-system-module
+          cmake -B build -Denable_lib_in_jar=OFF -Denable_sthread=OFF -DCMAKE_INSTALL_PREFIX=/opt/fsmod -DCMAKE_PREFIX_PATH=/opt/simgrid
+          cmake --build build -j$(nproc)
+          sudo cmake --install build
+
+      - name: Build and test
+        run: |
+          export LD_LIBRARY_PATH=/opt/simgrid/lib:/opt/fsmod/lib
+          export CMAKE_PREFIX_PATH=/opt/simgrid:/opt/fsmod
+
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build -j$(nproc)
+          cd build
+          ctest --output-on-failure

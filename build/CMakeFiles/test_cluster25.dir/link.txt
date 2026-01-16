@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/test_cluster25.dir/link.d CMakeFiles/test_cluster25.dir/tests/compare_cluster25.cpp.o CMakeFiles/test_cluster25.dir/tests/platform_cluster25.cpp.o -o test_cluster25  -Wl,-rpath,/home/suter/ORNL/NRTWsim-platform-generator/build:/usr/local/lib libplatform.so /usr/local/lib/libsimgrid.so /usr/local/lib/libfsmod.so

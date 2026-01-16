@@ -1,0 +1,28 @@
+Start testing: Jan 16 14:38 EST
+----------------------------------------------------------
+1/1 Testing: cluster25_comparison
+1/1 Test: cluster25_comparison
+Command: "/home/suter/ORNL/NRTWsim-platform-generator/build/test_cluster25"
+Directory: /home/suter/ORNL/NRTWsim-platform-generator/build
+"cluster25_comparison" start time: Jan 16 14:38 EST
+Output:
+----------------------------------------------------------
+=== Platform Comparison Test: cluster25 ===
+
+Loading JSON-generated platform...
+Loading original C++ platform...
+
+Result: PASS - Platforms are equivalent
+
+  Zones: 5
+  Hosts: 385
+  Disks: 257
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"cluster25_comparison" end time: Jan 16 14:38 EST
+"cluster25_comparison" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Jan 16 14:38 EST
