@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/platform_summary.dir/link.d CMakeFiles/platform_summary.dir/platform_summary.cpp.o -o platform_summary  -Wl,-rpath,/usr/local/lib: /usr/local/lib/libsimgrid.so /usr/local/lib/libfsmod.so

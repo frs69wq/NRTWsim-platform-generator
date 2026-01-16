@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -Wl,--dependency-file=CMakeFiles/platform.dir/link.d -shared -Wl,-soname,libplatform.so -o libplatform.so CMakeFiles/platform.dir/json_platform_loader.cpp.o  -Wl,-rpath,/usr/local/lib: /usr/local/lib/libsimgrid.so /usr/local/lib/libfsmod.so -ldl
