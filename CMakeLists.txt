@@ -16,6 +16,11 @@ find_package(nlohmann_json REQUIRED)
 # Main shared library: JSON-based platform loader
 add_library(platform SHARED json_platform_loader.cpp)
 
+target_include_directories(platform PRIVATE
+    ${SimGrid_INCLUDE_DIR}
+    ${FSMOD_INCLUDE_DIR}
+)
+
 target_link_libraries(platform PRIVATE
   SimGrid::SimGrid
   FSMOD::FSMOD
