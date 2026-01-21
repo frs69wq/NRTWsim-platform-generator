@@ -201,7 +201,8 @@ Clusters define groups of compute nodes with star topology:
 | `suffix` | string | Hostname suffix |
 | `count` | integer | Number of nodes |
 | `node` | object | Node configuration (see below) |
-| `backbone` | object | Backbone link configuration |
+| `backbone.bandwidth` | string | Backbone link bandwidth |
+| `backbone.latency` | string | Backbone link latency (optional, defaults to "0s") |
 
 **Node Configuration:**
 
@@ -209,8 +210,11 @@ Clusters define groups of compute nodes with star topology:
 |-------|------|-------------|
 | `speed` | string | Compute speed per node |
 | `cores` | integer | Number of cores per node |
-| `private_link` | object | Node-to-backbone link (up/down links) |
-| `loopback` | object | Loopback link for local communication |
+| `private_link.bandwidth` | string | Node-to-backbone link bandwidth |
+| `private_link.latency` | string | Node-to-backbone link latency (optional, defaults to "0s") |
+| `private_link.sharing_policy` | string | Sharing policy (optional) |
+| `loopback.bandwidth` | string | Loopback link bandwidth |
+| `loopback.latency` | string | Loopback link latency (optional, defaults to "0s") |
 | `storage` | object | Optional local storage per node |
 
 Host names are generated as: `{prefix}{index}{suffix}` (e.g., `node-0.cluster`, `node-1.cluster`, ...)
@@ -226,6 +230,12 @@ Inter-zone links connect different zones within a facility:
   "latency": "1ms"
 }
 ```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | string | Link name (used in route definitions) |
+| `bandwidth` | string | Link bandwidth |
+| `latency` | string | Link latency (optional, defaults to "0s") |
 
 ### Routes
 

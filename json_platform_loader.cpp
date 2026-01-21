@@ -25,8 +25,6 @@ using json     = nlohmann::json;
 // Forward declaration for dladdr
 extern "C" void load_platform(const sg4::Engine& e);
 
-namespace {
-
 std::string get_config_path()
 {
   // First, check environment variable
@@ -99,7 +97,7 @@ void create_cluster_zone(sg4::NetZone* parent, const json& cluster_config)
   // Create backbone
   const auto& backbone_cfg       = cluster_config["backbone"];
   const std::string backbone_bw  = backbone_cfg["bandwidth"];
-  const std::string backbone_lat = backbone_cfg["latency"];
+  const std::string backbone_lat = backbone_cfg.value("latency", "0s");
   const std::string backbone_name = name + "_backbone";
   const auto* backbone = cluster->add_link(backbone_name, backbone_bw)->set_latency(backbone_lat);
 
@@ -111,11 +109,11 @@ void create_cluster_zone(sg4::NetZone* parent, const json& cluster_config)
 
   const auto& private_link_cfg   = node_cfg["private_link"];
   const std::string link_bw      = private_link_cfg["bandwidth"];
-  const std::string link_lat     = private_link_cfg["latency"];
+  const std::string link_lat     = private_link_cfg.value("latency", "0s");
 
   const auto& loopback_cfg       = node_cfg["loopback"];
   const std::string loopback_bw  = loopback_cfg["bandwidth"];
-  const std::string loopback_lat = loopback_cfg["latency"];
+  const std::string loopback_lat = loopback_cfg.value("latency", "0s");
 
   // Check for node storage
   bool has_storage = node_cfg.contains("storage");
@@ -174,7 +172,7 @@ void create_inter_zone_links(sg4::NetZone* datacenter, const json& links_config)
   for (const auto& link_cfg : links_config) {
     const std::string link_name = link_cfg["name"];
     const std::string bandwidth = link_cfg["bandwidth"];
-    const std::string latency   = link_cfg["latency"];
+    const std::string latency   = link_cfg.value("latency", "0s");
     const auto* link = datacenter->add_link(link_name, bandwidth)->set_latency(latency);
     link_map[link_name] = link;
   }
@@ -261,8 +259,6 @@ void create_filesystems(const json& filesystems_config, const json& platform_con
     }
   }
 }
-
-} // anonymous namespace
 
 void load_platform(const sg4::Engine& e)
 {
