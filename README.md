@@ -182,7 +182,6 @@ Clusters define groups of compute nodes with star topology:
     },
     "storage": {
       "name": "local_nvme",
-      "type": "OneDisk",
       "read_bandwidth": "560MBps",
       "write_bandwidth": "510MBps"
     }
@@ -193,6 +192,8 @@ Clusters define groups of compute nodes with star topology:
   }
 }
 ```
+
+Node-local storage is always of type `OneDisk`.
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -317,7 +318,6 @@ See [platform_config.json](platform_config.json) for a complete example configur
             },
             "storage": {
               "name": "local_nvme",
-              "type": "OneDisk",
               "read_bandwidth": "560MBps",
               "write_bandwidth": "510MBps"
             }

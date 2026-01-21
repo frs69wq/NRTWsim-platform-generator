@@ -115,17 +115,15 @@ void create_cluster_zone(sg4::NetZone* parent, const json& cluster_config)
   const std::string loopback_bw  = loopback_cfg["bandwidth"];
   const std::string loopback_lat = loopback_cfg.value("latency", "0s");
 
-  // Check for node storage
+  // Check for node storage (always OneDisk for node-local storage)
   bool has_storage = node_cfg.contains("storage");
   std::string storage_base_name;
-  std::string storage_type;
   std::string storage_read_bw;
   std::string storage_write_bw;
 
   if (has_storage) {
     const auto& storage_cfg = node_cfg["storage"];
     storage_base_name       = storage_cfg["name"];
-    storage_type            = storage_cfg["type"];
     storage_read_bw         = storage_cfg["read_bandwidth"];
     storage_write_bw        = storage_cfg["write_bandwidth"];
   }
@@ -135,17 +133,12 @@ void create_cluster_zone(sg4::NetZone* parent, const json& cluster_config)
     std::string hostname = prefix + std::to_string(i) + suffix;
     auto* host           = cluster->add_host(hostname, host_speed)->set_core_count(host_cores);
 
-    // Create node storage if configured
+    // Create node storage if configured (always OneDisk for node-local storage)
     if (has_storage) {
       std::string storage_name = hostname + "_" + storage_base_name;
       std::string disk_name    = storage_name + "_disk";
       auto* disk               = host->add_disk(disk_name, storage_read_bw, storage_write_bw);
-
-      if (storage_type == "OneDisk") {
-        storage_map[storage_name] = sgfs::OneDiskStorage::create(storage_name, disk);
-      } else if (storage_type == "JBOD") {
-        storage_map[storage_name] = sgfs::JBODStorage::create(storage_name, {disk});
-      }
+      storage_map[storage_name] = sgfs::OneDiskStorage::create(storage_name, disk);
     }
 
     // Create links (up/down as separate links for compatibility)

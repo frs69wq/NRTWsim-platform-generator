@@ -33,7 +33,6 @@
             },
             "storage": {
               "name": "local_nvme",
-              "type": "OneDisk",
               "read_bandwidth": "560MBps",
               "write_bandwidth": "510MBps"
             }
