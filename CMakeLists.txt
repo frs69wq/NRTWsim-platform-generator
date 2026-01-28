@@ -14,7 +14,7 @@ find_package(FSMod REQUIRED)
 find_package(nlohmann_json REQUIRED)
 
 # Main shared library: JSON-based platform loader
-add_library(platform SHARED json_platform_loader.cpp)
+add_library(platform SHARED json_platform_loader_new.cpp)
 
 target_include_directories(platform PRIVATE
     ${SimGrid_INCLUDE_DIR}
@@ -45,7 +45,7 @@ enable_testing()
 
 add_executable(test_cluster25
   tests/compare_cluster25.cpp
-  tests/platform_cluster25.cpp
+  tests/platform_cluster25_multiple.cpp
 )
 target_include_directories(test_cluster25 PRIVATE
     ${SimGrid_INCLUDE_DIR}
@@ -61,7 +61,7 @@ target_link_libraries(test_cluster25 PRIVATE
 # Set the config path for the test
 add_test(NAME cluster25_comparison COMMAND test_cluster25)
 set_tests_properties(cluster25_comparison PROPERTIES
-  ENVIRONMENT "PLATFORM_CONFIG=${CMAKE_CURRENT_SOURCE_DIR}/tests/platform_cluster25.json"
+  ENVIRONMENT "PLATFORM_CONFIG=${CMAKE_CURRENT_SOURCE_DIR}/tests/platform_cluster25_multiple.json"
 )
 
 # Install rules

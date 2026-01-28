@@ -169,6 +169,30 @@ int main(int argc, char** argv)
     std::cout << "Result: FAIL - Platforms differ\n\n";
     std::cout << "JSON output:\n" << json_output << "\n";
     std::cout << "C++ output:\n" << cpp_output << "\n";
+
+    std::istringstream json_iss(json_output);
+    std::istringstream cpp_iss(cpp_output);
+
+    std::string json_line, cpp_line;
+    int line_num = 1;
+
+    while (true) {
+        bool json_ok = static_cast<bool>(std::getline(json_iss, json_line));
+        bool cpp_ok  = static_cast<bool>(std::getline(cpp_iss, cpp_line));
+
+        if (!json_ok && !cpp_ok) break;
+
+        if (!json_ok) json_line = "<missing>";
+        if (!cpp_ok)  cpp_line  = "<missing>";
+
+        if (json_line != cpp_line) {
+            std::cout << "Difference at line " << line_num << ":\n";
+            std::cout << "  JSON: " << json_line << "\n";
+            std::cout << "  C++ : " << cpp_line << "\n\n";
+        }
+
+        ++line_num;
+    }
     return 1;
   }
 }
