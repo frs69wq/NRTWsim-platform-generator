@@ -264,19 +264,10 @@ void load_platform(const sg4::Engine& e)
 
   json config = json::parse(config_file);
 
-  // Process each facility
+  // Process each facility (always uses Full routing)
   for (const auto& dc_config : config["facilities"]) {
     const std::string dc_name    = dc_config["name"];
-    const std::string dc_routing = dc_config["routing"];
-
-    sg4::NetZone* datacenter = nullptr;
-    if (dc_routing == "full") {
-      datacenter = e.get_netzone_root()->add_netzone_full(dc_name);
-    } else if (dc_routing == "floyd") {
-      datacenter = e.get_netzone_root()->add_netzone_floyd(dc_name);
-    } else {
-      datacenter = e.get_netzone_root()->add_netzone_full(dc_name);
-    }
+    sg4::NetZone* datacenter     = e.get_netzone_root()->add_netzone_full(dc_name);
     zone_map[dc_name] = datacenter;
 
     // Create storage system zones

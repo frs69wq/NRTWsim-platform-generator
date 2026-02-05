@@ -112,12 +112,11 @@ Example:
 
 ### Facilities
 
-A facility represents a top-level network zone (e.g., a datacenter):
+A facility represents a top-level network zone (e.g., a datacenter). Facilities always use Full routing.
 
 ```json
 {
   "name": "datacenter",
-  "routing": "full",
   "storage_systems": [...],
   "clusters": [...],
   "links": [...],
@@ -128,7 +127,6 @@ A facility represents a top-level network zone (e.g., a datacenter):
 | Field | Type | Description |
 |-------|------|-------------|
 | `name` | string | Unique identifier for the facility |
-| `routing` | string | Routing algorithm: `"full"` or `"floyd"` |
 | `storage_systems` | array | Storage system definitions |
 | `clusters` | array | Compute cluster definitions |
 | `links` | array | Inter-zone link definitions |
@@ -287,7 +285,6 @@ See [platform_config.json](platform_config.json) for a complete example configur
   "facilities": [
     {
       "name": "datacenter",
-      "routing": "full",
       "storage_systems": [
         {
           "name": "pfs",
