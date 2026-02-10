@@ -51,7 +51,7 @@ std::map<std::string, const sg4::Link*> link_map;
 void create_storage_system_zone(sg4::NetZone* parent, const json& storage_config)
 {
   const std::string name = storage_config["name"];
-  auto* zone             = parent->add_netzone_empty(name);
+  auto* zone             = parent->add_netzone_full(name);
   zone_map[name]         = zone;
 
   // Infer names from the storage system name
