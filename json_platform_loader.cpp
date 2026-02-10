@@ -81,6 +81,10 @@ void create_storage_system_zone(sg4::NetZone* parent, const json& storage_config
     storage_map[storage_name] = sgfs::OneDiskStorage::create(storage_name, disk);
   }
 
+  // Always add gateway router for consistent routing behavior
+  const std::string router_name = name + "_router";
+  zone->set_gateway(zone->add_router(router_name));
+
   zone->seal();
 }
 
@@ -294,7 +298,46 @@ void load_platform(const sg4::Engine& e)
       create_routes(datacenter, dc_config["routes"]);
     }
 
+    // Add gateway router for inter-facility routing
+    const std::string router_name = dc_name + "_router";
+    datacenter->set_gateway(datacenter->add_router(router_name));
+
     datacenter->seal();
+  }
+
+  // Create top-level storage system zones (shared across facilities)
+  if (config.contains("storage_systems")) {
+    for (const auto& storage_cfg : config["storage_systems"]) {
+      create_storage_system_zone(e.get_netzone_root(), storage_cfg);
+    }
+  }
+
+  // Create top-level inter-facility links
+  if (config.contains("links")) {
+    for (const auto& link_cfg : config["links"]) {
+      const std::string link_name = link_cfg["name"];
+      const std::string bandwidth = link_cfg["bandwidth"];
+      const std::string latency   = link_cfg.value("latency", "0s");
+      const auto* link = e.get_netzone_root()->add_link(link_name, bandwidth)->set_latency(latency);
+      link_map[link_name] = link;
+    }
+  }
+
+  // Create top-level routes (between facilities or between facility and shared storage)
+  if (config.contains("routes")) {
+    for (const auto& route_cfg : config["routes"]) {
+      const std::string src_name = route_cfg["src"];
+      const std::string dst_name = route_cfg["dst"];
+      auto* src_zone = zone_map[src_name];
+      auto* dst_zone = zone_map[dst_name];
+
+      std::vector<sg4::LinkInRoute> route_links;
+      for (const auto& link_name : route_cfg["links"]) {
+        route_links.emplace_back(link_map[link_name.get<std::string>()]);
+      }
+
+      e.get_netzone_root()->add_route(src_zone, dst_zone, route_links, true);  // symmetric = true
+    }
   }
 
   // Create filesystems (mount partitions)

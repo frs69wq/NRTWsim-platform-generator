@@ -1,0 +1,274 @@
+{
+  "facilities": [
+    {
+      "name": "datacenter",
+      "storage_systems": [
+        {
+          "name": "pfs",
+          "server_speed": "1Gf",
+          "type": "JBOD",
+          "disk_count": 1,
+          "read_bandwidth": "180MBps",
+          "write_bandwidth": "160MBps"
+        }
+      ],
+      "clusters": [
+        {
+          "name": "pub_cluster",
+          "prefix": "node-",
+          "suffix": ".pub",
+          "count": 256,
+          "node": {
+            "speed": "11Gf",
+            "cores": 96,
+            "private_link": {
+              "bandwidth": "1Gbps",
+              "latency": "2ms",
+              "sharing_policy": "SPLITDUPLEX"
+            },
+            "loopback": {
+              "bandwidth": "1Gbps",
+              "latency": "1.75ms"
+            },
+            "storage": {
+              "name": "local_nvme",
+              "read_bandwidth": "560MBps",
+              "write_bandwidth": "510MBps"
+            }
+          },
+          "backbone": {
+            "bandwidth": "10Gbps",
+            "latency": "1ms"
+          }
+        },
+        {
+          "name": "sub_cluster",
+          "prefix": "node-",
+          "suffix": ".sub",
+          "count": 128,
+          "node": {
+            "speed": "6Gf",
+            "cores": 48,
+            "private_link": {
+              "bandwidth": "1Gbps",
+              "latency": "2ms",
+              "sharing_policy": "SPLITDUPLEX"
+            },
+            "loopback": {
+              "bandwidth": "1Gbps",
+              "latency": "1.75ms"
+            }
+          },
+          "backbone": {
+            "bandwidth": "10Gbps",
+            "latency": "1ms"
+          }
+        }
+      ],
+      "links": [
+        {
+          "name": "inter-cluster",
+          "bandwidth": "20Gbps",
+          "latency": "1ms"
+        },
+        {
+          "name": "pub-pfs",
+          "bandwidth": "20Gbps",
+          "latency": "1ms"
+        },
+        {
+          "name": "sub-pfs",
+          "bandwidth": "10Gbps",
+          "latency": "1ms"
+        }
+      ],
+      "routes": [
+        {
+          "src": "pub_cluster",
+          "dst": "sub_cluster",
+          "links": ["inter-cluster"]
+        },
+        {
+          "src": "pub_cluster",
+          "dst": "pfs",
+          "links": ["pub-pfs"]
+        },
+        {
+          "src": "sub_cluster",
+          "dst": "pfs",
+          "links": ["sub-pfs"]
+        }
+      ]
+    },
+    {
+      "name": "datacenter1",
+      "storage_systems": [
+        {
+          "name": "pfs1",
+          "server_speed": "1Gf",
+          "type": "JBOD",
+          "disk_count": 1,
+          "read_bandwidth": "180MBps",
+          "write_bandwidth": "160MBps"
+        }
+      ],
+      "clusters": [
+        {
+          "name": "pub_cluster1",
+          "prefix": "node1-",
+          "suffix": ".pub",
+          "count": 256,
+          "node": {
+            "speed": "11Gf",
+            "cores": 96,
+            "private_link": {
+              "bandwidth": "1Gbps",
+              "latency": "2ms",
+              "sharing_policy": "SPLITDUPLEX"
+            },
+            "loopback": {
+              "bandwidth": "1Gbps",
+              "latency": "1.75ms"
+            },
+            "storage": {
+              "name": "local_nvme1",
+              "read_bandwidth": "560MBps",
+              "write_bandwidth": "510MBps"
+            }
+          },
+          "backbone": {
+            "bandwidth": "10Gbps",
+            "latency": "1ms"
+          }
+        },
+        {
+          "name": "sub_cluster1",
+          "prefix": "node1-",
+          "suffix": ".sub",
+          "count": 128,
+          "node": {
+            "speed": "6Gf",
+            "cores": 48,
+            "private_link": {
+              "bandwidth": "1Gbps",
+              "latency": "2ms",
+              "sharing_policy": "SPLITDUPLEX"
+            },
+            "loopback": {
+              "bandwidth": "1Gbps",
+              "latency": "1.75ms"
+            }
+          },
+          "backbone": {
+            "bandwidth": "10Gbps",
+            "latency": "1ms"
+          }
+        }
+      ],
+      "links": [
+        {
+          "name": "inter-cluster1",
+          "bandwidth": "20Gbps",
+          "latency": "1ms"
+        },
+        {
+          "name": "pub-pfs1",
+          "bandwidth": "20Gbps",
+          "latency": "1ms"
+        },
+        {
+          "name": "sub-pfs1",
+          "bandwidth": "10Gbps",
+          "latency": "1ms"
+        }
+      ],
+      "routes": [
+        {
+          "src": "pub_cluster1",
+          "dst": "sub_cluster1",
+          "links": ["inter-cluster1"]
+        },
+        {
+          "src": "pub_cluster1",
+          "dst": "pfs1",
+          "links": ["pub-pfs1"]
+        },
+        {
+          "src": "sub_cluster1",
+          "dst": "pfs1",
+          "links": ["sub-pfs1"]
+        }
+      ]
+    }
+  ],
+  "storage_systems": [
+    {
+      "name": "pfs0",
+      "server_speed": "1Gf",
+      "type": "JBOD",
+      "disk_count": 1,
+      "read_bandwidth": "180MBps",
+      "write_bandwidth": "160MBps"
+    }
+  ],
+  "links": [
+    {
+      "name": "dc-to-dc1",
+      "bandwidth": "40Gbps",
+      "latency": "10ms"
+    },
+    {
+      "name": "dc-to-fs0",
+      "bandwidth": "40Gbps",
+      "latency": "10ms"
+    },
+    {
+      "name": "dc1-to-fs0",
+      "bandwidth": "40Gbps",
+      "latency": "10ms"
+    }
+  ],
+  "routes": [
+    {
+      "src": "datacenter",
+      "dst": "datacenter1",
+      "links": ["dc-to-dc1"]
+    },
+    {
+      "src": "datacenter",
+      "dst": "pfs0",
+      "links": ["dc-to-fs0"]
+    },
+    {
+      "src": "datacenter1",
+      "dst": "pfs0",
+      "links": ["dc1-to-fs0"]
+    }
+  ],
+  "filesystems": [
+    {
+      "name": "remote_fs",
+      "storage_system": "pfs",
+      "mount_point": "/pfs/",
+      "size": "100TB"
+    },
+    {
+      "name": "remote_fs0",
+      "storage_system": "pfs0",
+      "mount_point": "/pfs0/",
+      "size": "100TB"
+    },
+    {
+      "name": "local_fs",
+      "cluster": "pub_cluster",
+      "mount_point": "/{hostname}/scratch/",
+      "size": "1TB"
+    },
+    {
+      "name": "local_fs1",
+      "cluster": "pub_cluster1",
+      "mount_point": "/{hostname}/scratch/",
+      "size": "1TB"
+    }
+  ]
+}

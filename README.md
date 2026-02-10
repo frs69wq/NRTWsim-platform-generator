@@ -103,12 +103,29 @@ Example:
 
 ### Top-Level Structure
 
+The JSON configuration supports both single and multi-datacenter platforms:
+
 ```json
 {
   "facilities": [...],
+  "storage_systems": [...],
+  "links": [...],
+  "routes": [...],
   "filesystems": [...]
 }
 ```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `facilities` | array | Yes | One or more datacenter facilities |
+| `storage_systems` | array | No | Shared storage systems accessible across facilities |
+| `links` | array | No | Inter-facility network links |
+| `routes` | array | No | Routes between facilities or to shared storage |
+| `filesystems` | array | No | Filesystem mount points |
+
+**Single Datacenter**: Use only `facilities` (with one entry) and `filesystems`.
+
+**Multiple Datacenters**: Use multiple `facilities` entries, plus top-level `storage_systems`, `links`, and `routes` to connect them.
 
 ### Facilities
 
@@ -248,6 +265,64 @@ Routes define the path between zones using links:
 }
 ```
 
+## Multi-Datacenter Configuration
+
+To create platforms spanning multiple datacenters with shared resources, use top-level `storage_systems`, `links`, and `routes`.
+
+### Top-Level Storage Systems
+
+Shared storage systems accessible from multiple facilities:
+
+```json
+"storage_systems": [
+  {
+    "name": "shared_pfs",
+    "server_speed": "1Gf",
+    "type": "JBOD",
+    "disk_count": 1,
+    "read_bandwidth": "180MBps",
+    "write_bandwidth": "160MBps"
+  }
+]
+```
+
+These use the same format as facility-level storage systems but are created at the root network zone level.
+
+### Top-Level Links
+
+Inter-facility network links:
+
+```json
+"links": [
+  {
+    "name": "dc1-to-dc2",
+    "bandwidth": "40Gbps",
+    "latency": "10ms"
+  }
+]
+```
+
+### Top-Level Routes
+
+Routes connecting facilities or linking facilities to shared storage:
+
+```json
+"routes": [
+  {
+    "src": "datacenter1",
+    "dst": "datacenter2",
+    "links": ["dc1-to-dc2"]
+  },
+  {
+    "src": "datacenter1",
+    "dst": "shared_pfs",
+    "links": ["dc1-to-storage"]
+  }
+]
+```
+
+The `src` and `dst` fields reference facility names or storage system names. Each facility automatically gets a gateway router to enable inter-facility routing.
+
 ### Filesystems
 
 Filesystems define mount points backed by storage systems or cluster-local storage:
@@ -355,6 +430,70 @@ See [platform_config.json](platform_config.json) for a complete example configur
       "size": "1TB"
     }
   ]
+}
+```
+
+### Multi-Datacenter Example
+
+For platforms with multiple datacenters, add top-level `storage_systems`, `links`, and `routes`:
+
+```json
+{
+  "facilities": [
+    {
+      "name": "datacenter1",
+      "clusters": [...]
+    },
+    {
+      "name": "datacenter2",
+      "clusters": [...]
+    }
+  ],
+  "storage_systems": [
+    {
+      "name": "shared_storage",
+      "server_speed": "1Gf",
+      "type": "JBOD",
+      "disk_count": 1,
+      "read_bandwidth": "180MBps",
+      "write_bandwidth": "160MBps"
+    }
+  ],
+  "links": [
+    {
+      "name": "dc1-to-dc2",
+      "bandwidth": "40Gbps",
+      "latency": "10ms"
+    },
+    {
+      "name": "dc1-to-storage",
+      "bandwidth": "40Gbps",
+      "latency": "5ms"
+    },
+    {
+      "name": "dc2-to-storage",
+      "bandwidth": "40Gbps",
+      "latency": "5ms"
+    }
+  ],
+  "routes": [
+    {
+      "src": "datacenter1",
+      "dst": "datacenter2",
+      "links": ["dc1-to-dc2"]
+    },
+    {
+      "src": "datacenter1",
+      "dst": "shared_storage",
+      "links": ["dc1-to-storage"]
+    },
+    {
+      "src": "datacenter2",
+      "dst": "shared_storage",
+      "links": ["dc2-to-storage"]
+    }
+  ],
+  "filesystems": [...]
 }
 ```
 
